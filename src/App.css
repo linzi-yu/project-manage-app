@@ -1,3 +1,62 @@
+.password-gate {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: var(--color-bg);
+}
+
+.password-gate-card {
+  width: min(100%, 22rem);
+  padding: 28px 26px;
+}
+
+.password-gate-title {
+  margin: 0 0 8px;
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.password-gate-lead {
+  margin: 0 0 18px;
+  font-size: 0.9rem;
+}
+
+.password-gate-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  margin-bottom: 6px;
+}
+
+.password-gate-input {
+  margin-bottom: 12px;
+}
+
+.password-gate-error {
+  margin: 0 0 12px;
+  font-size: 13px;
+  color: #b91c1c;
+}
+
+.password-gate-submit {
+  width: 100%;
+  margin-top: 4px;
+  padding: 10px 14px;
+  font-weight: 600;
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-accent-foreground);
+}
+
+.password-gate-submit:hover {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+  color: var(--color-accent-foreground);
+}
+
 .app-shell {
   max-width: 1180px;
   margin: 0 auto;

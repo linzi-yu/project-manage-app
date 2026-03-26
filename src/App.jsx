@@ -4,6 +4,8 @@ import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAx
 import './App.css'
 
 const STORAGE_KEY = 'dental_clinic_opening_project_v3'
+const UNLOCK_SESSION_KEY = 'dental_app_unlock_ok'
+const APP_PASSWORD = 'limmy'
 const tabs = ['summary', 'timelines', 'budget']
 /** Default task categories when none are stored yet. */
 const DEFAULT_TASK_CATEGORIES = [
@@ -472,6 +474,57 @@ function DateRangePairCell({
   )
 }
 
+function PasswordGate({ onSuccess }) {
+  const [value, setValue] = useState('')
+  const [error, setError] = useState(false)
+
+  const submit = (e) => {
+    e.preventDefault()
+    const trimmed = value.trim()
+    if (trimmed === APP_PASSWORD) {
+      try {
+        sessionStorage.setItem(UNLOCK_SESSION_KEY, '1')
+      } catch {
+        /* ignore quota / private mode */
+      }
+      setError(false)
+      onSuccess()
+    } else {
+      setError(true)
+      setValue('')
+    }
+  }
+
+  return (
+    <div className="password-gate">
+      <form className="password-gate-card card" onSubmit={submit}>
+        <h1 className="password-gate-title">Sign in</h1>
+        <p className="muted password-gate-lead">Enter the password to open this tracker.</p>
+        <label className="password-gate-label" htmlFor="app-password">
+          Password
+        </label>
+        <input
+          id="app-password"
+          name="password"
+          type="password"
+          autoComplete="current-password"
+          autoFocus
+          className="password-gate-input"
+          value={value}
+          onChange={(e) => {
+            setValue(e.target.value)
+            if (error) setError(false)
+          }}
+        />
+        {error ? <p className="password-gate-error">That password is not correct.</p> : null}
+        <button type="submit" className="password-gate-submit">
+          Continue
+        </button>
+      </form>
+    </div>
+  )
+}
+
 function StatusIconDisplay({ task, compact = false }) {
   const wrapClass = `status-icon-wrap${compact ? ' compact' : ''}`
   if (task.status === 'Completed') {
@@ -496,6 +549,13 @@ function StatusIconDisplay({ task, compact = false }) {
 }
 
 function App() {
+  const [unlocked, setUnlocked] = useState(() => {
+    try {
+      return sessionStorage.getItem(UNLOCK_SESSION_KEY) === '1'
+    } catch {
+      return false
+    }
+  })
   const [activeTab, setActiveTab] = useState('summary')
   const [deadlineWindow, setDeadlineWindow] = useState(14)
   const [categoryFilter, setCategoryFilter] = useState('All')
@@ -949,6 +1009,10 @@ function App() {
     setGanttBarTooltip((prev) => (prev ? { ...prev, x: e.clientX, y: e.clientY } : null))
   }
   const closeGanttBarTooltip = () => setGanttBarTooltip(null)
+
+  if (!unlocked) {
+    return <PasswordGate onSuccess={() => setUnlocked(true)} />
+  }
 
   return (
     <>
